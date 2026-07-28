@@ -1,0 +1,13 @@
+{
+  "name": "multi-workspace-mcp",
+  "owner": {
+    "name": "onlineKonverzió"
+  },
+  "plugins": [
+    {
+      "name": "google-workspace-setup",
+      "source": "./",
+      "description": "Guided setup for connecting Google Workspace accounts to Claude Code via workspace-mcp."
+    }
+  ]
+}
