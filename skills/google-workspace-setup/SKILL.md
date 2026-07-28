@@ -25,12 +25,22 @@ Two rules that prevent most failures:
 
 ## Step 0 — Preflight
 
-```bash
-command -v uvx || brew install uv
-```
+`uvx` must exist. Check first, and only install if it is missing — pick the command for the
+user's OS:
 
-`uvx` must exist. `register_server.py` resolves its absolute path automatically, which
-matters because MCP servers are spawned without the login shell's PATH.
+| OS | Check | Install |
+|---|---|---|
+| macOS | `command -v uvx` | `brew install uv` |
+| Windows | `where uvx` | `winget install --id=astral-sh.uv -e` |
+| Linux | `command -v uvx` | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
+
+Windows without winget:
+`powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
+
+The uv installer puts the binaries in `~/.local/bin` (`uvx.exe` on Windows). A newly
+installed `uvx` may not be on PATH until the terminal is reopened — that does not block you,
+because `register_server.py` resolves the absolute path itself, which is required anyway:
+MCP servers are spawned without the login shell's PATH.
 
 ## Step 1 — Gather requirements
 
@@ -162,8 +172,9 @@ automatically on the first failing call instead.
 
 ## Step 6 — Restart
 
-The user must quit Claude Code completely (**⌘Q**, not just closing the window) and reopen
-it. MCP servers are spawned at session start; a config change is invisible until then.
+The user must quit Claude Code **completely** and reopen it — closing the window is not
+enough, the app keeps running. macOS: **⌘Q**. Windows: **Alt+F4** or quit from the tray
+icon. MCP servers are spawned at session start; a config change is invisible until then.
 
 ## Step 7 — Authenticate and verify
 

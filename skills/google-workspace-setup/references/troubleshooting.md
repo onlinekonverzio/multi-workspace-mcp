@@ -72,9 +72,12 @@ authenticating many accounts.
 ## "command not found: uvx" in the MCP server log
 
 The server was registered with a bare `uvx`. GUI-launched apps do not inherit the login
-shell's PATH, so Homebrew's directory is missing.
+shell's PATH, so the directory holding `uvx` is missing.
 
-Fix: use the absolute path (`/opt/homebrew/bin/uvx` on Apple Silicon).
+Fix: use the absolute path — `/opt/homebrew/bin/uvx` (macOS, Apple Silicon),
+`/usr/local/bin/uvx` (macOS Intel), `%USERPROFILE%\.local\bin\uvx.exe` (Windows),
+`~/.local/bin/uvx` (Linux). `register_server.py` fills this in automatically; the error
+means the entry was written by hand.
 
 ## Tokens die after about a week
 

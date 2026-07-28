@@ -21,6 +21,8 @@ Restricted instance for client accounts (read-only, but Drive up/download):
         --port 8002
 """
 
+from __future__ import annotations
+
 import argparse
 import json
 import os
@@ -39,12 +41,24 @@ def find_uvx() -> str:
     PATH, so a bare 'uvx' command fails on many machines."""
     found = shutil.which("uvx")
     if found:
-        return found
-    for candidate in ("/opt/homebrew/bin/uvx", "/usr/local/bin/uvx",
-                      os.path.expanduser("~/.local/bin/uvx")):
+        return os.path.abspath(found)
+    home = os.path.expanduser("~")
+    for candidate in (
+        os.path.join(home, ".local", "bin", "uvx.exe"),   # Windows, uv installer
+        os.path.join(home, ".local", "bin", "uvx"),       # Linux / manual install
+        "/opt/homebrew/bin/uvx",                          # macOS, Apple Silicon
+        "/usr/local/bin/uvx",                             # macOS, Intel
+    ):
         if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
             return candidate
-    sys.exit("uvx not found. Install it with: brew install uv")
+    if os.name == "nt":
+        hint = ('winget install --id=astral-sh.uv -e   (or: powershell '
+                '-ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex")')
+    elif sys.platform == "darwin":
+        hint = "brew install uv"
+    else:
+        hint = "curl -LsSf https://astral.sh/uv/install.sh | sh"
+    sys.exit(f"uvx not found. Install it with: {hint}")
 
 
 def read_client(path: str) -> tuple[str, str]:

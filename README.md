@@ -25,7 +25,9 @@ java a Google Cloud Console-ban töltött idő.
 
 Amire szükséged lesz:
 
-- **Homebrew** és **uv** (`brew install uv`) — a Claude ellenőrzi és szól, ha hiányzik
+- **uv** — macOS: `brew install uv`, Windows: `winget install --id=astral-sh.uv -e`,
+  Linux: `curl -LsSf https://astral.sh/uv/install.sh | sh`. A Claude ellenőrzi és szól, ha
+  hiányzik. (A Homebrew csak macOS-en és Linuxon van, Windowson nem kell.)
 - Hozzáférés a [Google Cloud Console](https://console.cloud.google.com/)-hoz
 - Azoknak a Google-fiókoknak a jelszava, amiket be akarsz kötni
 
