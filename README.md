@@ -53,7 +53,7 @@ porttal és token-tárolóval — ezt neked nem kell kézzel intézned.
 
 ## Amit érdemes előre tudni
 
-**Több domén nem probléma.** Különböző Google Workspace előfizetések fiókjai ugyanabban a
+**Több domain nem probléma.** Különböző Google Workspace előfizetések fiókjai ugyanabban a
 setupban működnek, admin jogosultság nélkül.
 
 **Személyes @gmail.com fiók viszont igen.** A Google az ellenőrizetlen alkalmazásokat
