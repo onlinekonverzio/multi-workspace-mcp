@@ -31,9 +31,8 @@ Amire szükséged lesz:
 
 > **Mindenki a saját Google Cloud projektjét hozza létre.** Ne használjátok közösen egy
 > kolléga projektjét: az ellenőrizetlen projekt élettartamára szól a 100 felhasználós
-> korlát, ami nem nullázható, és a publikálási státusz meg a client secret is közös lenne —
-> egyvalaki személyes Gmail-fiókja az egész csapatot heti újrahitelesítésre ítélné. A
-> projekt létrehozása egyébként ingyenes és két kattintás.
+> korlát, ami nem nullázható, és a publikálási státusz meg a client secret is közös lenne
+> a projekt létrehozása egyébként ingyenes és két kattintás.
 
 ## Amit eldöntesz a folyamat során
 
