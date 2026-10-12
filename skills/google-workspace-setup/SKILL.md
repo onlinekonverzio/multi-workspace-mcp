@@ -131,13 +131,14 @@ verify before sending anyone to the admin console.
 
 One instance per permission level. Give each its own port and credential directory.
 
-`register_server.py` lives in `scripts/` next to this file. Resolve its absolute path
-before calling it — when installed as a plugin the working directory is the user's project,
-not the plugin:
+`register_server.py` lives in `scripts/` next to this file. Call it by absolute path — when
+installed as a plugin the working directory is the user's project, not the plugin. Claude
+Code fills in the skill directory below when it loads this file; the second line is a
+fallback for versions that do not, and picks the most recently installed copy:
 
 ```bash
-SETUP=${CLAUDE_PLUGIN_ROOT:-.}/skills/google-workspace-setup/scripts/register_server.py
-[ -f "$SETUP" ] || SETUP=$(find ~/.claude -name register_server.py -path '*google-workspace-setup*' 2>/dev/null | head -1)
+SETUP="${CLAUDE_SKILL_DIR}/scripts/register_server.py"
+[ -f "$SETUP" ] || SETUP=$(find ~/.claude -name register_server.py -path '*google-workspace-setup*' -exec ls -t {} + 2>/dev/null | head -1)
 ```
 
 ```bash
@@ -150,7 +151,12 @@ python3 "$SETUP" \
 ```
 
 Run with `--dry-run` first, show the user the output, then re-run without it. The script
-backs up `~/.claude.json`, writes atomically, keeps mode 600, and refuses a port collision.
+backs up `~/.claude.json` (keeping the three newest backups), writes atomically, keeps mode
+600, validates service and level names, and refuses a port collision.
+
+Re-running for an existing instance replaces its services and permission levels but keeps
+its port, default email, tool tier and token directory unless you pass the matching flag —
+the output lists what was kept. Pass `--fresh` to reset those to defaults instead.
 
 A second, restricted instance:
 

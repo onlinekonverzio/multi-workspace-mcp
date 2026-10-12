@@ -110,5 +110,9 @@ rm ~/.google_workspace_mcp/<instance>/<email>.json
 ## Changing services or permission levels later
 
 Adding a service or raising a level changes the scope set, so every affected account must
-re-authenticate. Re-run `register_server.py` with the new flags, restart, then
-`start_google_auth` per account.
+re-authenticate. Re-run `register_server.py` with the same `--name` and the new `--services`
+or `--permissions`, restart, then `start_google_auth` per account.
+
+The re-run keeps the instance's port, default email, tool tier and token directory, so
+accounts whose scopes did not change stay signed in. To drop one of those, pass `--fresh`
+and state everything again.
