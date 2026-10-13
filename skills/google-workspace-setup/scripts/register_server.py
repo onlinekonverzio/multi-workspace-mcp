@@ -2,6 +2,8 @@
 """Register a workspace-mcp instance in ~/.claude.json.
 
 Writes atomically, keeps the file at mode 600, and never touches unrelated keys.
+(Windows has no file modes; there the file stays protected by the user profile's
+own permissions.)
 Run with --dry-run first to show what would change.
 
 Re-running for an existing instance keeps its port, default email, tool tier and
@@ -62,11 +64,16 @@ def find_uvx() -> str:
     if found:
         return os.path.abspath(found)
     home = os.path.expanduser("~")
+    local_app_data = os.environ.get("LOCALAPPDATA") or os.path.join(home, "AppData", "Local")
     for candidate in (
+        os.path.join(local_app_data, "Microsoft", "WinGet", "Links", "uvx.exe"),  # Windows, winget
         os.path.join(home, ".local", "bin", "uvx.exe"),   # Windows, uv installer
+        os.path.join(home, ".cargo", "bin", "uvx.exe"),   # Windows, older uv installer
         os.path.join(home, ".local", "bin", "uvx"),       # Linux / manual install
+        os.path.join(home, ".cargo", "bin", "uvx"),       # Linux, older uv installer
         "/opt/homebrew/bin/uvx",                          # macOS, Apple Silicon
         "/usr/local/bin/uvx",                             # macOS, Intel
+        "/home/linuxbrew/.linuxbrew/bin/uvx",             # Linux, Homebrew
     ):
         if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
             return candidate
@@ -78,6 +85,14 @@ def find_uvx() -> str:
     else:
         hint = "curl -LsSf https://astral.sh/uv/install.sh | sh"
     sys.exit(f"uvx not found. Install it with: {hint}")
+
+
+def quit_hint(platform: str = sys.platform) -> str:
+    if platform == "darwin":
+        return " (Cmd+Q)"
+    if platform == "win32":
+        return " (Alt+F4, or Quit from the tray icon)"
+    return ""
 
 
 def read_client(path: str) -> tuple[str, str]:
@@ -337,7 +352,7 @@ def main(argv: list[str] | None = None) -> None:
     if creds_dir:
         os.makedirs(creds_dir, mode=0o700, exist_ok=True)
     write_config(config)
-    print("\nQuit Claude Code completely (Cmd+Q) and reopen it, then authenticate.")
+    print(f"\nQuit Claude Code completely{quit_hint()} and reopen it, then authenticate.")
 
 
 if __name__ == "__main__":

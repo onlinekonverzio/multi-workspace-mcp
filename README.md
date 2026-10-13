@@ -64,9 +64,10 @@ projektet Testing státuszba kell tenni, ahol a Google **7 naponta visszavonja a
 tokent**, tehát hetente újra kell hitelesíteni minden fiókot. A Claude ezt végigbeszéli
 veled, mielőtt döntenél.
 
-**A tokenek a gépeden maradnak.** A `~/.google_workspace_mcp/` alatt, `600`-as
-jogosultsággal. Semmilyen adat nem megy harmadik félhez — a Claude közvetlenül a Google
-API-jait hívja a te hitelesítéseddel.
+**A tokenek a gépeden maradnak.** A `~/.google_workspace_mcp/` alatt, macOS-en és Linuxon
+`600`-as jogosultsággal, Windowson a felhasználói profilod védelme alatt. Semmilyen adat
+nem megy harmadik félhez — a Claude közvetlenül a Google API-jait hívja a te
+hitelesítéseddel.
 
 ## Ha elakadsz
 

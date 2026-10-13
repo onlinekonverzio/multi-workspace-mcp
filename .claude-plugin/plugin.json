@@ -1,7 +1,7 @@
 {
   "name": "google-workspace-setup",
   "description": "Guided setup for connecting Google Workspace accounts (Gmail, Drive, Calendar, Docs, Sheets, Slides, Tasks, Contacts) to Claude Code via workspace-mcp — with choices for access level and tool selection, and per-account authentication across multiple domains.",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "author": {
     "name": "onlineKonverzió"
   }

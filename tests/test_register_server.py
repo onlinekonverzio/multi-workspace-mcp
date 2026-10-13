@@ -270,5 +270,51 @@ class RegisterServerTest(unittest.TestCase):
         self.assertFalse(self.config.exists())
 
 
+class FindUvxTest(unittest.TestCase):
+    def setUp(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        self.home = Path(tmp.name).resolve()
+        for patcher in (mock.patch.object(rs.shutil, "which", return_value=None),
+                        mock.patch.object(rs.os.path, "expanduser",
+                                          lambda p: p.replace("~", str(self.home), 1))):
+            patcher.start()
+            self.addCleanup(patcher.stop)
+
+    def make(self, *parts):
+        path = self.home.joinpath(*parts)
+        path.parent.mkdir(parents=True)
+        path.write_text("")
+        path.chmod(0o755)
+        return str(path)
+
+    def test_path_lookup_wins(self):
+        with mock.patch.object(rs.shutil, "which", return_value=os.path.abspath("uvx")):
+            self.assertEqual(rs.find_uvx(), os.path.abspath("uvx"))
+
+    def test_finds_winget_link_when_not_on_path(self):
+        expected = self.make("AppData", "Local", "Microsoft", "WinGet", "Links", "uvx.exe")
+        with mock.patch.dict(os.environ, {"LOCALAPPDATA": str(self.home / "AppData" / "Local")}):
+            self.assertEqual(rs.find_uvx(), expected)
+
+    def test_winget_link_without_localappdata_variable(self):
+        expected = self.make("AppData", "Local", "Microsoft", "WinGet", "Links", "uvx.exe")
+        env = {k: v for k, v in os.environ.items() if k != "LOCALAPPDATA"}
+        with mock.patch.dict(os.environ, env, clear=True):
+            self.assertEqual(rs.find_uvx(), expected)
+
+    def test_finds_uv_installer_locations(self):
+        for parts in ((".local", "bin", "uvx.exe"), (".cargo", "bin", "uvx")):
+            with self.subTest(parts=parts):
+                expected = self.make(*parts)
+                self.assertEqual(rs.find_uvx(), expected)
+                os.unlink(expected)
+
+    def test_quit_hint_per_platform(self):
+        self.assertIn("Cmd+Q", rs.quit_hint("darwin"))
+        self.assertIn("tray icon", rs.quit_hint("win32"))
+        self.assertEqual(rs.quit_hint("linux"), "")
+
+
 if __name__ == "__main__":
     unittest.main()
