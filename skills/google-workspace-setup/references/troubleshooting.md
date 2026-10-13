@@ -12,10 +12,12 @@ The server process did not receive the credentials. Putting them in an `env` blo
 MCP server processes despite what upstream docs suggest.
 
 Fix: the credentials belong in the server's own `env` block in `~/.claude.json` under
-`mcpServers.<name>.env`. `register_server.py` does this. Then quit Claude Code (⌘Q) and
-reopen — the running server still holds the old environment.
+`mcpServers.<name>.env`. `register_server.py` does this. Then quit Claude Code completely
+(macOS: ⌘Q, Windows: Alt+F4 or Quit from the tray icon) and reopen — the running server
+still holds the old environment.
 
-Verify without restarting:
+Verify without restarting (on Windows run it from Git Bash with `python` in place of
+`python3`):
 
 ```bash
 python3 - <<'PY'
@@ -75,7 +77,8 @@ The server was registered with a bare `uvx`. GUI-launched apps do not inherit th
 shell's PATH, so the directory holding `uvx` is missing.
 
 Fix: use the absolute path — `/opt/homebrew/bin/uvx` (macOS, Apple Silicon),
-`/usr/local/bin/uvx` (macOS Intel), `%USERPROFILE%\.local\bin\uvx.exe` (Windows),
+`/usr/local/bin/uvx` (macOS Intel), `%USERPROFILE%\.local\bin\uvx.exe` (Windows, uv
+installer), `%LOCALAPPDATA%\Microsoft\WinGet\Links\uvx.exe` (Windows, winget),
 `~/.local/bin/uvx` (Linux). `register_server.py` fills this in automatically; the error
 means the entry was written by hand.
 

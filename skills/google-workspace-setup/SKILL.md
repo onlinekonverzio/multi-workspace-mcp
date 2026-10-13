@@ -37,10 +37,11 @@ user's OS:
 Windows without winget:
 `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
 
-The uv installer puts the binaries in `~/.local/bin` (`uvx.exe` on Windows). A newly
-installed `uvx` may not be on PATH until the terminal is reopened — that does not block you,
-because `register_server.py` resolves the absolute path itself, which is required anyway:
-MCP servers are spawned without the login shell's PATH.
+The uv installer puts the binaries in `~/.local/bin` (`uvx.exe` on Windows); winget links
+them into `%LOCALAPPDATA%\Microsoft\WinGet\Links`. A newly installed `uvx` may not be on
+PATH until the terminal is reopened — that does not block you, because `register_server.py`
+checks those locations and resolves the absolute path itself, which is required anyway: MCP
+servers are spawned without the login shell's PATH.
 
 ## Step 1 — Gather requirements
 
@@ -141,6 +142,11 @@ SETUP="${CLAUDE_SKILL_DIR}/scripts/register_server.py"
 [ -f "$SETUP" ] || SETUP=$(find ~/.claude -name register_server.py -path '*google-workspace-setup*' -exec ls -t {} + 2>/dev/null | head -1)
 ```
 
+The examples call `python3`, which is right for macOS and Linux. On Windows `python3` is
+usually the Microsoft Store stub, not an interpreter — use `python` or `py -3` there. If the
+machine has no Python at all, `uv run --no-project "$SETUP" …` works wherever `uv` is on
+PATH; the script needs nothing beyond the standard library.
+
 ```bash
 python3 "$SETUP" \
   --name google-workspace \
@@ -152,7 +158,7 @@ python3 "$SETUP" \
 
 Run with `--dry-run` first, show the user the output, then re-run without it. The script
 backs up `~/.claude.json` (keeping the three newest backups), writes atomically, keeps mode
-600, validates service and level names, and refuses a port collision.
+600 on macOS and Linux, validates service and level names, and refuses a port collision.
 
 Re-running for an existing instance replaces its services and permission levels but keeps
 its port, default email, tool tier and token directory unless you pass the matching flag —
